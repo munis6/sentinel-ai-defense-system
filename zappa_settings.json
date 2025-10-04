@@ -1,0 +1,20 @@
+
+
+
+{
+  "dev": {
+    "app_function": "app.app",
+    "aws_region": "us-east-1",
+    "profile_name": "default",
+    "project_name": "alert-intake-api",
+    "runtime": "python3.12",
+    "s3_bucket": "zappa-alert-intake",
+    "manage_roles": true,
+    "slim_handler": true,
+    "role_name": "alert-intake-api-dev-ZappaLambdaExecutionRole",
+    "environment_variables": {
+      "BANK_API_KEY": "your-secret-key",
+      "SQS_QUEUE_URL": "https://sqs.us-east-2.amazonaws.com/666127453030/bank-alerts-queue"
+    }
+  }
+}
