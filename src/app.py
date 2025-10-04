@@ -23,8 +23,8 @@ REQUIRED_FIELDS = [
 ALLOWED_STATUS = {"open", "in_progress", "closed"}
 
 # ✅ Health check + schema documentation
-@app.route("/", methods=["GET"])
-def index():
+@app.route("/health", methods=["GET"])
+def health():
     return jsonify({
         "message": "✅ Secure Alert Intake API is live",
         "status": "healthy",
@@ -47,8 +47,17 @@ def index():
     }), 200
 
 # ✅ Alert intake endpoint with schema enforcement
-@app.route("/", methods=["POST"])
+@app.route("/alerts", methods=["POST"])
 def receive_alert():
+    # 🔐 Enforce API key
+    if request.headers.get("x-api-key") != "your-secure-api-key":
+        return jsonify({"error": "Missing or invalid API key"}), 403
+
+    # 📦 Enforce Content-Type
+    if request.content_type != "application/json":
+        return jsonify({"error": "Unsupported Media Type"}), 415
+
+    # 🧪 Ensure JSON body
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
@@ -69,10 +78,16 @@ def receive_alert():
     if data["status"] not in ALLOWED_STATUS:
         return jsonify({"error": "Invalid status value"}), 422
 
+    # 🔍 Validate severity enum
+    if data["severity"] not in ["low", "medium", "high", "critical"]:
+        return jsonify({"error": "Invalid severity value"}), 422
+
+    # 🔍 Validate risk_score type
+    if not isinstance(data["risk_score"], (int, float)):
+        return jsonify({"error": "risk_score must be numeric"}), 422
+
     # 🧾 Audit log entry
     logging.info(f"Received alert: {data['alert_id']} | Type: {data['alert_type']} | Severity: {data['severity']}")
 
     # 🧩 Placeholder for enrichment, routing, or storage
-    # e.g., enrich_alert(data), route_to_team(data), store_in_db(data)
-
     return jsonify({"message": "Alert received", "alert_id": data["alert_id"]}), 200

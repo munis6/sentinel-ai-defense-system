@@ -98,3 +98,6 @@ pytest tests/test_app.py -v
 **Sekhar** — Cloud Architect & API Orchestrator  
 Focused on clarity, auditability, and real-world readiness.  
 Specialized in modular cloud platforms, agentic AI orchestration, and client-trusted API design.
+
+
+
